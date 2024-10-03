@@ -1,0 +1,5 @@
+# Ignorar a pasta MySQL inteira
+mysql/
+
+# Ignorar a pasta node_modules inteira
+node_modules/

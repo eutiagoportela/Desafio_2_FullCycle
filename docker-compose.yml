@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      context: ./node-app
+    container_name: app
+    tty: true
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 20s npm start
+
+  db:
+    image: mysql:5.7
+    container_name: db
+    restart: always
+    tty: true
+    environment:
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_INITDB_SKIP_TZINFO=1
+      - MYSQL_TLS_VERSION=TLSv1.2
+    ports:
+      - "3307:3306"  # Certifique-se de que esta linha está formatada corretamente como uma lista
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql:/var/lib/mysql
+      - ./mysql:/var/run/mysqld
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
+
+networks:
+  default:
+    driver: bridge
