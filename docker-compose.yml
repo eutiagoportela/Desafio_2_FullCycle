@@ -8,6 +8,9 @@ services:
       - "3000:3000"
     depends_on:
       - db
+    volumes:
+      - ./node-app:/usr/src/app  # Mapeia a pasta do código local para o container
+      - /usr/src/app/node_modules  # Garante que o node_modules do container não seja sobrescrito
     entrypoint: dockerize -wait tcp://db:3306 -timeout 20s npm start
 
   db:
